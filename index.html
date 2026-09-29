@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>System Security Alert</title>
+
+    <style>
+
+        /* =========================================
+           COLOR PALETTE
+           ========================================= */
+
+        :root {
+            --hunter-green: #355E3B;
+            --olive-green: #6B6E23;
+            --dark-gray: #2F3133;
+            --dark-brown: #3B2F2F;
+            --grayish-blue: #8A9BA8;
+
+            --terminal-red: #ff3333;
+            --terminal-dark-red: #120000;
+        }
+
+
+        /* =========================================
+           GENERAL
+           ========================================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #050505;
+            font-family: "Courier New", monospace;
+        }
+
+
+        /* =========================================
+           FAKE VIRUS SCREEN
+           ========================================= */
+
+        #virus-screen {
+            min-height: 100vh;
+            padding: 40px 25px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background: #050505;
+            color: var(--terminal-red);
+        }
+
+        .terminal {
+            width: 100%;
+            max-width: 850px;
+
+            border: 2px solid var(--terminal-red);
+            padding: 35px;
+
+            background: #080808;
+
+            box-shadow:
+                0 0 10px var(--terminal-red),
+                inset 0 0 25px rgba(255, 0, 0, 0.08);
+        }
+
+        .warning {
+            color: #ff2222;
+            font-weight: bold;
+            font-size: 28px;
+            margin-bottom: 30px;
+
+            text-shadow: 0 0 8px #ff2222;
+        }
+
+        .line {
+            margin: 10px 0;
+        }
+
+        .system {
+            color: #cccccc;
+        }
+
+        .danger {
+            color: var(--terminal-red);
+        }
+
+        .status-box {
+            border: 1px solid #772222;
+
+            padding: 20px;
+            margin: 30px 0;
+
+            color: #bbbbbb;
+
+            background: rgba(40, 0, 0, 0.2);
+        }
+
+        .status-title {
+            color: var(--terminal-red);
+            margin-bottom: 15px;
+        }
+
+        .password-area {
+            margin-top: 35px;
+        }
+
+        .password-label {
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        input {
+            width: 100%;
+            max-width: 500px;
+
+            padding: 14px;
+
+            background: #000000;
+
+            border: 1px solid var(--terminal-red);
+
+            color: var(--terminal-red);
+
+            font-family: "Courier New", monospace;
+            font-size: 18px;
+
+            outline: none;
+        }
+
+        input:focus {
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        button {
+            display: block;
+
+            margin-top: 15px;
+            padding: 13px 25px;
+
+            background: var(--terminal-dark-red);
+
+            border: 1px solid var(--terminal-red);
+
+            color: var(--terminal-red);
+
+            font-family: "Courier New", monospace;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: var(--terminal-red);
+            color: #000000;
+        }
+
+        #response {
+            margin-top: 25px;
+            min-height: 30px;
+        }
+
+        .wrong {
+            color: var(--terminal-red);
+        }
+
+        .hint {
+            color: #ffffff;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+
+        /* =========================================
+           BIRTHDAY SCREEN
+           ========================================= */
+
+        #birthday-screen {
+            display: none;
+
+            min-height: 100vh;
+
+            position: relative;
+
+            justify-content: center;
+            align-items: center;
+
+            text-align: center;
+
+            padding: 40px 20px;
+
+            overflow: hidden;
+
+            background-color: var(--dark-gray);
+
+            background-image:
+                linear-gradient(
+                    rgba(20, 25, 24, 0.48),
+                    rgba(20, 25, 24, 0.58)
+                ),
+                url("elonbdaysky.jpg");
+
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+
+        /* =========================================
+           BIRTHDAY CARD
+           ========================================= */
+
+        .reveal {
+            width: 100%;
+            max-width: 760px;
+
+            padding: 50px 45px;
+
+            position: relative;
+            z-index: 10;
+
+            background: rgba(47, 49, 51, 0.76);
+
+            border: 1px solid rgba(138, 155, 168, 0.65);
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 15px 50px rgba(0, 0, 0, 0.45);
+
+            backdrop-filter: blur(3px);
+        }
+
+
+        /* =========================================
+           DREAMY BIRTHDAY TYPOGRAPHY
+           ========================================= */
+
+        .access {
+            color: #B5C0B7;
+
+            font-family: "Courier New", monospace;
+
+            font-size: 16px;
+
+            letter-spacing: 2px;
+
+            line-height: 1.5;
+
+            margin-bottom: 35px;
+        }
+
+        .wait-text {
+            color: #D7D0C8;
+
+            font-family: Georgia, "Times New Roman", serif;
+
+            font-size: 28px;
+
+            font-style: italic;
+
+            letter-spacing: 1px;
+
+            margin: 20px 0;
+        }
+
+        .birthday-subtitle {
+            color: #C5CCD0;
+
+            font-family: Georgia, "Times New Roman", serif;
+
+            font-size: 19px;
+
+            font-style: italic;
+
+            line-height: 1.7;
+
+            margin: 15px 0;
+        }
+
+        .birthday-title {
+            color: #AFC0B1;
+
+            font-family: Georgia, "Times New Roman", serif;
+
+            font-size: 54px;
+
+            font-weight: normal;
+
+            font-style: italic;
+
+            letter-spacing: 1px;
+
+            line-height: 1.1;
+
+            margin: 25px 0;
+
+            text-shadow:
+                1px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .birthday-name {
+            color: #A5B6C1;
+
+            font-size: 48px;
+
+            font-weight: bold;
+
+            font-style: normal;
+
+            letter-spacing: 2px;
+        }
+
+
+        /* =========================================
+           PERSONAL BIRTHDAY MESSAGE
+           ========================================= */
+
+        .birthday-message {
+            color: #DDD9D3;
+
+            font-family: Georgia, "Times New Roman", serif;
+
+            font-size: 18px;
+
+            line-height: 1.8;
+
+            margin-top: 30px;
+
+            text-align: center;
+        }
+
+        .birthday-accent {
+            color: #AEB99B;
+        }
+
+
+        /* =========================================
+           SMALL DECORATIVE DIVIDER
+           ========================================= */
+
+        .divider {
+            width: 100px;
+
+            height: 1px;
+
+            background: #6B6E23;
+
+            margin: 30px auto;
+        }
+
+
+        /* =========================================
+           FALLING CHARACTERS
+           ========================================= */
+
+        #falling-characters {
+            position: absolute;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            overflow: hidden;
+
+            z-index: 5;
+        }
+
+        .falling-character {
+            position: absolute;
+
+            top: -100px;
+
+            width: 65px;
+
+            height: auto;
+
+            opacity: 0.95;
+
+            animation:
+                fall linear forwards;
+        }
+
+        @keyframes fall {
+
+            0% {
+                transform:
+                    translateY(-100px)
+                    rotate(0deg);
+            }
+
+            100% {
+                transform:
+                    translateY(110vh)
+                    rotate(360deg);
+            }
+        }
+
+
+        /* =========================================
+           MOBILE
+           ========================================= */
+
+        @media (max-width: 600px) {
+
+            #virus-screen {
+                padding: 20px 12px;
+            }
+
+            .terminal {
+                padding: 22px;
+            }
+
+            .warning {
+                font-size: 21px;
+            }
+
+            .reveal {
+                padding: 35px 22px;
+            }
+
+            .birthday-title {
+                font-size: 40px;
+            }
+
+            .birthday-name {
+                font-size: 34px;
+            }
+
+            .birthday-subtitle {
+                font-size: 17px;
+            }
+
+            .birthday-message {
+                font-size: 16px;
+                line-height: 1.75;
+            }
+
+            .access {
+                font-size: 13px;
+                letter-spacing: 1px;
+            }
+
+            .falling-character {
+                width: 50px;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- =========================================
+         FAKE VIRUS SCREEN
+         ========================================= -->
+
+    <div id="virus-screen">
+
+        <div class="terminal">
+
+            <div class="warning">
+                ⚠ CRITICAL SECURITY ALERT ⚠
+            </div>
+
+
+            <div class="line system">
+                Unauthorized access detected.
+            </div>
+
+
+            <div class="line system">
+                Your device has been compromised by an
+                unidentified external process.
+            </div>
+
+
+            <div class="status-box">
+
+                <div class="status-title">
+                    [ POTENTIALLY EXPOSED INFORMATION ]
+                </div>
+
+                <div>
+                    • Personal files
+                </div>
+
+                <div>
+                    • Browser data
+                </div>
+
+                <div>
+                    • System information
+                </div>
+
+                <div>
+                    • Birthday-related classified materials
+                </div>
+
+            </div>
+
+
+            <div class="line danger">
+                SECURITY PROTOCOL: ACTIVE
+            </div>
+
+
+            <div class="line system">
+                An identity verification procedure is required
+                to terminate the unauthorized access.
+            </div>
+
+
+            <div class="status-box">
+
+                <div class="status-title">
+                    [ SYSTEM STATUS ]
+                </div>
+
+                <div>
+                    NETWORK ................. COMPROMISED
+                </div>
+
+                <div>
+                    FIREWALL ................ DISABLED
+                </div>
+
+                <div>
+                    SECURITY ................ CRITICAL
+                </div>
+
+                <div>
+                    INTRUSION ............... DETECTED
+                </div>
+
+                <div>
+                    UNKNOWN FILE ............ birthday.exe
+                </div>
+
+            </div>
+
+
+            <div class="password-area">
+
+                <div class="password-label">
+                    ENTER SECURITY PASSWORD:
+                </div>
+
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter password..."
+                >
+
+
+                <button onclick="checkPassword()">
+                    [ VERIFY IDENTITY ]
+                </button>
+
+
+                <div id="response"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================================
+         BIRTHDAY SCREEN
+         ========================================= -->
+
+    <div id="birthday-screen">
+
+
+        <!-- Falling characters -->
+
+        <div id="falling-characters"></div>
+
+
+        <!-- Birthday card -->
+
+        <div class="reveal">
+
+
+            <div class="access">
+
+                ACCESS GRANTED.
+
+                <br>
+                <br>
+
+                SECURITY THREAT SUCCESSFULLY NEUTRALIZED.
+
+            </div>
+
+
+            <div class="divider"></div>
+
+
+            <p class="wait-text">
+                Wait.
+            </p>
+
+
+            <p class="birthday-subtitle">
+                This isn't a virus.
+            </p>
+
+
+            <div class="divider"></div>
+
+
+            <h1 class="birthday-title">
+                It's your birthday!
+            </h1>
+
+
+            <h1 class="birthday-title birthday-name">
+                HAPPY BIRTHDAY, ELON!
+            </h1>
+
+
+            <div class="divider"></div>
+
+
+            <p class="birthday-message">
+
+                I'm really happy we became friends!
+                I know this isn't much, but I really wanted
+                to try and put together something that warranted
+                the short time we've known each other
+                ๑•͈ᴗ•͈๑
+
+                <br><br>
+
+                You're a really cool person and I already have
+                a few things to thank you for which shows what
+                kind of person you are : P
+
+                <br><br>
+
+                Thank you for staying up to speak to me on the
+                two occasions where I was drunk out of my mind
+                and listening to me ramble about things I
+                actually can't even remember right now
+                ᜊ•ᴗ•ᜊ
+
+                <br><br>
+
+                I picked this song from your playlist
+                (stalker, I know) because even behind that lil'
+                tsundere act you put up you have a
+                <span class="birthday-accent">
+                    Sweet disposition
+                </span>
+                : 3
+
+                <br><br>
+
+                I love you and I hope your twenty-third year
+                treats you well baby
+                ₍ᐢ..ᐢ₎♡
+
+            </p>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================================
+         MUSIC
+         ========================================= -->
+
+    <audio
+        id="birthday-song"
+        src="music/birthday-song.mp3"
+        preload="auto">
+    </audio>
+
+
+
+    <!-- =========================================
+         JAVASCRIPT
+         ========================================= -->
+
+    <script>
+
+
+        /* =========================================
+           PASSWORD
+           ========================================= */
+
+        function checkPassword() {
+
+            const correctPassword = "09302003";
+
+
+            const enteredPassword =
+                document.getElementById("password").value;
+
+
+            const response =
+                document.getElementById("response");
+
+
+            if (enteredPassword === correctPassword) {
+
+
+                /* Hide virus screen */
+
+                document.getElementById(
+                    "virus-screen"
+                ).style.display = "none";
+
+
+                /* Show birthday screen */
+
+                document.getElementById(
+                    "birthday-screen"
+                ).style.display = "flex";
+
+
+                /* Start music */
+
+                const song =
+                    document.getElementById(
+                        "birthday-song"
+                    );
+
+
+                song.currentTime = 0;
+
+
+                song.play().catch(() => {});
+
+
+                /* Start falling characters */
+
+                for (
+                    let i = 0;
+                    i < 15;
+                    i++
+                ) {
+
+                    setTimeout(
+                        createFallingCharacter,
+                        i * 150
+                    );
+
+                }
+
+
+                /* Keep spawning characters */
+
+                setInterval(
+                    createFallingCharacter,
+                    700
+                );
+
+
+            } else {
+
+
+                response.innerHTML = `
+
+                    <div class="wrong">
+                        ❌ ACCESS DENIED.
+                    </div>
+
+                    <div class="hint">
+
+                        Verification failed.
+
+                        <br>
+                        <br>
+
+                        HINT:
+
+                        The answer has been following you
+                        since the day you were born.
+
+                    </div>
+
+                `;
+
+            }
+
+        }
+
+
+
+        /* =========================================
+           FALLING CHARACTERS
+           ========================================= */
+
+        const characterImages = [
+
+            "characters/pompompurin.png",
+
+            "characters/domokun.png",
+
+            "characters/inuyasha.png",
+
+            "characters/badtzmaru.png",
+
+            "characters/gojo.png"
+
+        ];
+
+
+
+        function createFallingCharacter() {
+
+
+            const container =
+                document.getElementById(
+                    "falling-characters"
+                );
+
+
+            const character =
+                document.createElement("img");
+
+
+            /* Pick random character */
+
+            character.src =
+                characterImages[
+                    Math.floor(
+                        Math.random()
+                        *
+                        characterImages.length
+                    )
+                ];
+
+
+            character.className =
+                "falling-character";
+
+
+            /* Random horizontal position */
+
+            character.style.left =
+                Math.random() * 100 + "%";
+
+
+            /* Random size */
+
+            character.style.width =
+                (45 + Math.random() * 45)
+                + "px";
+
+
+            /* Random falling speed */
+
+            character.style.animationDuration =
+                (5 + Math.random() * 5)
+                + "s";
+
+
+            /* Random starting delay */
+
+            character.style.animationDelay =
+                Math.random() * 2
+                + "s";
+
+
+            container.appendChild(
+                character
+            );
+
+
+            /* Remove after falling */
+
+            setTimeout(() => {
+
+                character.remove();
+
+            }, 12000);
+
+        }
+
+
+
+        /* =========================================
+           ENTER KEY
+           ========================================= */
+
+        document
+            .getElementById("password")
+            .addEventListener(
+                "keydown",
+                function(event) {
+
+                    if (
+                        event.key === "Enter"
+                    ) {
+
+                        checkPassword();
+
+                    }
+
+                }
+            );
+
+
+    </script>
+
+</body>
+</html>
